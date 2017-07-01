@@ -18,25 +18,25 @@ const AppContainer = (props) => {
             thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
         },
         {
-            foodId: 1,
+            foodId: 2,
             name: "Cake",
             price: 70,
             thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
         },
         {
-            foodId: 1,
+            foodId: 3,
             name: "Spaghetti",
             price: 71,
             thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
         },
         {
-            foodId: 1,
+            foodId: 4,
             name: "Italian Chicken Ala King",
             price: 72,
             thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
         },
         {
-            foodId: 1,
+            foodId: 5,
             name: "French Fries",
             price: 73,
             thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
@@ -62,7 +62,7 @@ const AppContainer = (props) => {
             flex="1"
             flexDirection="column"
             height="100%">
-            <Header user={props.user} />
+            <Header user={props.user} showDropdown={props.showDropdown} isDropdownShown={props.isDropdownShown} />
             <Switch>
                 <Route exact path="/" component={(mProps) => <RestaurantList {...mProps} restaurants={props.restaurants} onShowChooser={onShowChooser} /> } />
                 <Route path="/restaurant/:id" component={(mProps) => <Restaurant {...mProps} restaurant={getRestaurant(mProps)} menu={props.menu || dummyMenu} />} />
