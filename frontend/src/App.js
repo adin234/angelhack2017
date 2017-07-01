@@ -53,6 +53,7 @@ class App extends Component {
             randomize: false,
             isLoggedIn: false,
             showRestaurants: true,
+            isDropdownShown: false,
             user: null
         };
     }
@@ -73,6 +74,12 @@ class App extends Component {
             });
         };
 
+        const showDropdown = () => {
+            this.setState({
+                isDropdownShown: true
+            })
+        }
+
         return (
             <Div className="App"
                  flex="1"
@@ -82,7 +89,8 @@ class App extends Component {
                  height="100%"
                  background="#EEEEEE"
             >
-                <AppContainer restaurants={restaurants} showChooser={showChooser} user={this.state.user} />
+                <AppContainer restaurants={restaurants} isDropdownShown={this.state.isDropdownShown}
+                              showDropdown={showDropdown} showChooser={showChooser} user={this.state.user} />
                 {this.state.randomize ? (<Randomizer onClose={hideChooser} />) : (<span></span>)}
                 {!this.state.isLoggedIn ? (<Login onLogin={onLogin} />) : (<span></span>)}
             </Div>
