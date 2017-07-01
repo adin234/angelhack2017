@@ -1,10 +1,9 @@
 import React from 'react';
-import {Button} from 'react-materialize';
 
 import {Div} from 'glamorous';
+import FacebookLogin from 'react-facebook-login';
 
 const Login = (props) => {
-
     return (
         <Div
             className={`${props.className}`}
@@ -17,7 +16,11 @@ const Login = (props) => {
             display="flex"
             justifyContent="center"
             alignItems="center">
-            <Button>Hello {props.name}</Button>
+            <FacebookLogin
+                appId="1823811157946623"
+                autoLoad={true}
+                fields="name,email,picture"
+                callback={props.onLogin} />
         </Div>
     );
 

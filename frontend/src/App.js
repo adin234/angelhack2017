@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 
 import Login from './Login';
-import Chat from './Chat';
+import AppContainer from './AppContainer';
 import Randomizer from './Randomizer';
 
 import {Div} from 'glamorous';
@@ -11,7 +11,9 @@ class App extends Component {
     constructor() {
         super();
         this.state = {
-            randomize: false
+            randomize: false,
+            isLoggedIn: false,
+            user: null
         };
     }
 
@@ -24,6 +26,14 @@ class App extends Component {
             this.setState({randomize: false});
         };
 
+        const onLogin = (data) => {
+            this.setState({
+                isLoggedIn: true,
+                user: data
+            });
+
+        };
+
         return (
             <Div className="App"
                 flex="1"
@@ -32,9 +42,9 @@ class App extends Component {
                 position="relative"
                 height="100%"
             >
-                <Chat showChooser={showChooser}/>
+                <AppContainer restaurants={[1,2,3,4,5]} showChooser={showChooser} user={this.state.user} />
                 {this.state.randomize ? (<Randomizer onClose={hideChooser} />) : (<span></span>)}
-                {/*<Login name="test" />*/}
+                {!this.state.isLoggedIn ? (<Login onLogin={onLogin} />) : (<span></span>)}
             </Div>
         );
     }
