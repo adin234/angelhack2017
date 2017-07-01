@@ -73,13 +73,6 @@ class App extends Component {
             });
         };
 
-        const selectRestaurant = (restaurant) => {
-            this.setState({
-                restaurant: restaurant,
-                showRestaurants: false,
-            });
-        }
-
         return (
             <Div className="App"
                  flex="1"

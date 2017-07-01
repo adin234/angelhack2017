@@ -32,7 +32,7 @@ const AppContainer = (props) => {
             <Header user={props.user} />
             <Switch>
                 <Route exact path="/" component={(mProps) => <RestaurantList {...mProps} restaurants={props.restaurants} onShowChooser={onShowChooser} /> } />
-                <Route path="/restaurant/:id" component={(mProps) => <Restaurant {...mProps} restaurant={getRestaurant(mProps)} />} />
+                <Route path="/restaurant/:id" component={(mProps) => <Restaurant {...mProps} restaurant={getRestaurant(mProps)} menu={props.menu || []} />} />
             </Switch>
         </Div>
     );

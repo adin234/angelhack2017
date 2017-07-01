@@ -12,7 +12,7 @@ const StyledLink = glamorous(Link)({
 });
 
 const Restaurant = (props) => {
-    const {restaurant, onSelect} = props;
+    const {restaurant} = props;
     return (
         <StyledLink to={'/restaurant/' + restaurant.restaurantId}>
             <Card style={{margin: 0}}>
