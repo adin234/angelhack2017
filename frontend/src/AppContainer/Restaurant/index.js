@@ -27,7 +27,7 @@ const Restaurant = (props) => {
                 padding="5px">
                 <H4 textAlign="left">Menu</H4>
                 { props.menu.length > 0
-                    ? props.menu.map((menu) => <Menu food={menu} key={menu.foodId} />)
+                    ? props.menu.map((menu) => <Menu addToCart={(food) => props.addToCart(food, restaurant)} food={menu} key={menu.foodId} />)
                     : <span>No Menu Available</span> }
 
             </Div>

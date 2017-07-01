@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Div, Img} from 'glamorous';
-
+import {Link} from 'react-router-dom';
 import {Dropdown, NavItem, Input} from 'react-materialize';
 
 const Header = (props) => {
@@ -25,6 +25,14 @@ const Header = (props) => {
                         <NavItem><Input name='group1' type='checkbox' value='hypertensive' label='Hypertensive' /></NavItem>
                         <NavItem><Input name='group1' type='checkbox' value='halal' label='Halal Only' /></NavItem>
                         <NavItem><Input name='group1' type='checkbox' value='budget' label='Budget' /></NavItem>
+                        <NavItem style={{
+                            padding: '0',
+                            lineHeight: '0',
+                            minHeight: '0',
+                            borderBottom: '2px solid #eeeeee',
+                            height: '0px'
+                        }}>&nbsp;</NavItem>
+                        <NavItem><Link to="/cart"><i className="material-icons">shopping_cart</i> Cart</Link></NavItem>
                     </Dropdown>
                 ) : (<span></span>) }
 

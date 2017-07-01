@@ -6,7 +6,9 @@ import {Div} from 'glamorous';
 
 import RestaurantList from './RestaurantList';
 import Restaurant from './Restaurant';
+import Cart from './Cart';
 
+import Notifications from 'react-notify-toast';
 import {Switch, Route} from 'react-router-dom';
 
 const AppContainer = (props) => {
@@ -63,9 +65,13 @@ const AppContainer = (props) => {
             flexDirection="column"
             height="100%">
             <Header user={props.user} showDropdown={props.showDropdown} isDropdownShown={props.isDropdownShown} />
+            <Notifications />
             <Switch>
                 <Route exact path="/" component={(mProps) => <RestaurantList {...mProps} restaurants={props.restaurants} onShowChooser={onShowChooser} /> } />
-                <Route path="/restaurant/:id" component={(mProps) => <Restaurant {...mProps} restaurant={getRestaurant(mProps)} menu={props.menu || dummyMenu} />} />
+                <Route path="/cart" component={(mProps) => <Cart {...mProps} items={props.cart}/> } />
+                <Route path="/restaurant/:id" component={(mProps) =>
+                    <Restaurant {...mProps} addToCart={props.addToCart} restaurant={getRestaurant(mProps)} menu={props.menu || dummyMenu} />
+                } />
             </Switch>
         </Div>
     );
