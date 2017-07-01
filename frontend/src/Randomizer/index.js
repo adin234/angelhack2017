@@ -8,7 +8,7 @@ const Randomizer = (props) => {
     return (
         <Div
             className={`${props.className}`}
-            position="absolute"
+            position="fixed"
             top="0"
             bottom="0"
             left="0"
@@ -68,7 +68,7 @@ const Randomizer = (props) => {
                         padding:'10px',
                         fontSize: '80px'
                     }}
-                >done</i>
+                >add</i>
             </Div>
         </Div>
     );
