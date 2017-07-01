@@ -7,6 +7,8 @@ import Randomizer from './Randomizer';
 
 import {Div} from 'glamorous';
 
+import 'sanitize.css/sanitize.css';
+
 const restaurants = [{
     restaurantId: 1,
     restaurantName: 'a',
@@ -50,6 +52,7 @@ class App extends Component {
         this.state = {
             randomize: false,
             isLoggedIn: false,
+            showRestaurants: true,
             user: null
         };
     }
@@ -68,16 +71,23 @@ class App extends Component {
                 isLoggedIn: true,
                 user: data
             });
-
         };
+
+        const selectRestaurant = (restaurant) => {
+            this.setState({
+                restaurant: restaurant,
+                showRestaurants: false,
+            });
+        }
 
         return (
             <Div className="App"
-                flex="1"
-                display="box"
-                flexDirection="column"
-                position="relative"
-                height="100%"
+                 flex="1"
+                 display="box"
+                 flexDirection="column"
+                 position="relative"
+                 height="100%"
+                 background="#EEEEEE"
             >
                 <AppContainer restaurants={restaurants} showChooser={showChooser} user={this.state.user} />
                 {this.state.randomize ? (<Randomizer onClose={hideChooser} />) : (<span></span>)}

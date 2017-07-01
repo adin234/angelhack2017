@@ -7,7 +7,7 @@ const Login = (props) => {
     return (
         <Div
             className={`${props.className}`}
-            position="absolute"
+            position="fixed"
             top="0"
             bottom="0"
             left="0"
