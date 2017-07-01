@@ -11,6 +11,13 @@ const StyledMessages = glamorous(ChatMessages)({
 });
 
 const Chat = (props) => {
+    const onSend = function(value) {
+        switch (value.trim().toLowerCase()) {
+            case 'surprise me':
+                props.showChooser();
+                break;
+        }
+    };
 
     return (
         <Div
@@ -20,7 +27,7 @@ const Chat = (props) => {
             height="100%">
             <ChatHeader />
             <StyledMessages />
-            <ChatForm/>
+            <ChatForm onSend={onSend}/>
         </Div>
     );
 

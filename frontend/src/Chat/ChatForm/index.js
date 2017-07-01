@@ -15,6 +15,11 @@ const StyledButton = glamorous(CustomButton)({
 });
 
 const ChatForm = (props) => {
+    let input;
+
+    function handleClick() {
+        props.onSend(input.value);
+    }
 
     return (
         <Div
@@ -23,8 +28,12 @@ const ChatForm = (props) => {
             flexDirection="row"
             height="100px"
             borderTop="2px solid #e1e1e1">
-            <TextArea height="100%" flex="1"/>
-            <StyledButton><i className="material-icons right" style={{marginLeft:'0px'}}>send</i>Send</StyledButton>
+            <TextArea height="100%" flex="1" innerRef={
+                (ref) => {
+                    return input = ref;
+                }
+            }/>
+            <StyledButton onClick={handleClick}><i className="material-icons right" style={{marginLeft:'0px'}}>send</i>Send</StyledButton>
         </Div>
     );
 
