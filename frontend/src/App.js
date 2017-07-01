@@ -7,6 +7,43 @@ import Randomizer from './Randomizer';
 
 import {Div} from 'glamorous';
 
+const restaurants = [{
+    restaurantId: 1,
+    restaurantName: 'a',
+    thumbnail: 'https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7',
+    distance: '4.5'
+}, {
+    restaurantId: 2,
+    restaurantName: 'ba',
+    thumbnail: 'https://employmenthub.co/images/logos/Mcdonald%27s.jpg',
+    distance: '4.5'
+}, {
+    restaurantId: 3,
+    restaurantName: 'bca',
+    thumbnail: 'https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7',
+    distance: '4.5'
+}, {
+    restaurantId: 4,
+    restaurantName: 'abcd',
+    thumbnail: 'https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7',
+    distance: '4.5'
+}, {
+    restaurantId: 5,
+    restaurantName: 'abcde',
+    thumbnail: 'https://employmenthub.co/images/logos/Mcdonald%27s.jpg',
+    distance: '4.5'
+}, {
+    restaurantId: 6,
+    restaurantName: 'abcdef',
+    thumbnail: 'https://employmenthub.co/images/logos/Mcdonald%27s.jpg',
+    distance: '4.5'
+}, {
+    restaurantId: 7,
+    restaurantName: 'abcdefg',
+    thumbnail: 'https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7',
+    distance: '4.5'
+}];
+
 class App extends Component {
     constructor() {
         super();
@@ -42,7 +79,7 @@ class App extends Component {
                 position="relative"
                 height="100%"
             >
-                <AppContainer restaurants={[1,2,3,4,5]} showChooser={showChooser} user={this.state.user} />
+                <AppContainer restaurants={restaurants} showChooser={showChooser} user={this.state.user} />
                 {this.state.randomize ? (<Randomizer onClose={hideChooser} />) : (<span></span>)}
                 {!this.state.isLoggedIn ? (<Login onLogin={onLogin} />) : (<span></span>)}
             </Div>

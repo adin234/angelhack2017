@@ -10,6 +10,7 @@
     "glamorous": "^3.23.5",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "react-facebook-login": "^3.6.2",
     "react-materialize": "^1.0.3"
   },
   "scripts": {
