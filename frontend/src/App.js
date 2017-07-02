@@ -4,6 +4,7 @@ import './App.css';
 import Login from './Login';
 import AppContainer from './AppContainer';
 import Randomizer from './Randomizer';
+import {notify} from 'react-notify-toast';
 
 import {Div} from 'glamorous';
 
@@ -54,7 +55,8 @@ class App extends Component {
             isLoggedIn: false,
             showRestaurants: true,
             isDropdownShown: false,
-            user: null
+            user: null,
+            cart: []
         };
     }
 
@@ -78,7 +80,22 @@ class App extends Component {
             this.setState({
                 isDropdownShown: true
             })
-        }
+        };
+
+        const addToCart = (food, restaurant) => {
+            for (let i in this.state.cart) {
+                let cartItem = this.state.cart[i];
+                if (cartItem.food.foodId === food.foodId && cartItem.restaurant.restaurantId === restaurant.restaurantId) {
+                    return;
+                }
+            }
+
+            this.setState({
+                cart: [...this.state.cart, {food: food, restaurant: restaurant}]
+            });
+
+            notify.show('Added ' + food.name + ' from ' + restaurant.restaurantName + ' to cart.');
+        };
 
         return (
             <Div className="App"
@@ -90,7 +107,8 @@ class App extends Component {
                  background="#EEEEEE"
             >
                 <AppContainer restaurants={restaurants} isDropdownShown={this.state.isDropdownShown}
-                              showDropdown={showDropdown} showChooser={showChooser} user={this.state.user} />
+                              showDropdown={showDropdown} showChooser={showChooser} user={this.state.user}
+                              cart={this.state.cart} addToCart={addToCart}/>
                 {this.state.randomize ? (<Randomizer onClose={hideChooser} />) : (<span></span>)}
                 {!this.state.isLoggedIn ? (<Login onLogin={onLogin} />) : (<span></span>)}
             </Div>

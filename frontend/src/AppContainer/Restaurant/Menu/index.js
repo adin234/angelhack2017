@@ -7,7 +7,7 @@ const Menu = (props) => {
     const {food} = props;
 
     return (
-            <Card style={{margin: 0}}>
+            <Card style={{margin: 0}} onClick={() => props.addToCart(food) }>
                 <Div width="100%" height="250px" overflow="hidden" position="relative">
                     <Img
                         src={food.thumbnail}
