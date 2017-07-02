@@ -4,7 +4,6 @@ var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
 var mysql = require('mysql');
 var cors		   = require('cors');
-var async 		   = require('async');
 var exec = require('child_process').exec;
 app.use(cors());
 
@@ -102,10 +101,6 @@ app.post('order',function(req,res){
     var name = req.body.orders;
     res.send(true);
 });
-
-async function get_tags(food_id) {
-
-}
 
 var meat = {
 	"meat":true,

@@ -11,7 +11,7 @@ const Header = (props) => {
             position="relative"
             className="teal"
         >
-            <h3 className="white-text">AppName here</h3>
+            <h3 className="white-text">Ambrosia</h3>
             { props.user != null ?
                 (
                     <Dropdown trigger={

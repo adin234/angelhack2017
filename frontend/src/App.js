@@ -12,7 +12,7 @@ import 'sanitize.css/sanitize.css';
 
 import _ from 'lodash';
 
-const host = 'http://172.16.1.67:6969';
+const host = 'http://localhost:6969';
 
 const toQueryString = (obj) => {
     let parts = [];
