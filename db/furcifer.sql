@@ -15,7 +15,7 @@ CREATE TABLE food (
     name VARCHAR(255) NOT NULL,
     restaurant_id INT NOT NULL,
     price FLOAT NOT NULL, 
-    image varchar(255) NOT NULL,
+    image varchar(255) DEFAULT NULL,
     PRIMARY KEY (food_id),
     FOREIGN KEY (restaurant_id) REFERENCES restaurant(restaurant_id)
 );
@@ -34,6 +34,8 @@ CREATE TABLE user (
     halal_only TINYINT DEFAULT 0,
     hypertensive TINYINT DEFAULT 0,
     budget_only TINYINT DEFAULT 0,
+    age INT NOT NULL,
+    gender TINYINT,
     PRIMARY KEY (user_id)
 );
 
