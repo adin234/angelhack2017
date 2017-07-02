@@ -10,42 +10,9 @@ import {Div} from 'glamorous';
 
 import 'sanitize.css/sanitize.css';
 
-const restaurants = [{
-    restaurantId: 1,
-    restaurantName: 'a',
-    thumbnail: 'https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7',
-    distance: '4.5'
-}, {
-    restaurantId: 2,
-    restaurantName: 'ba',
-    thumbnail: 'https://employmenthub.co/images/logos/Mcdonald%27s.jpg',
-    distance: '4.5'
-}, {
-    restaurantId: 3,
-    restaurantName: 'bca',
-    thumbnail: 'https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7',
-    distance: '4.5'
-}, {
-    restaurantId: 4,
-    restaurantName: 'abcd',
-    thumbnail: 'https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7',
-    distance: '4.5'
-}, {
-    restaurantId: 5,
-    restaurantName: 'abcde',
-    thumbnail: 'https://employmenthub.co/images/logos/Mcdonald%27s.jpg',
-    distance: '4.5'
-}, {
-    restaurantId: 6,
-    restaurantName: 'abcdef',
-    thumbnail: 'https://employmenthub.co/images/logos/Mcdonald%27s.jpg',
-    distance: '4.5'
-}, {
-    restaurantId: 7,
-    restaurantName: 'abcdefg',
-    thumbnail: 'https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7',
-    distance: '4.5'
-}];
+import _ from 'lodash';
+
+const host = 'http://172.16.1.67:6969';
 
 class App extends Component {
     constructor() {
@@ -55,9 +22,25 @@ class App extends Component {
             isLoggedIn: false,
             showRestaurants: true,
             isDropdownShown: false,
+            restaurants: [],
             user: null,
+            menu: [],
             cart: []
         };
+    }
+
+    componentWillMount() {
+        fetch(host + '/restaurants/list', {
+                method: 'GET',
+                headers: {
+                    'Content-Type' : 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(json => this.setState({restaurants: json.map(e => {
+                e.thumbnail = host + '/images/' + e.image;
+                return e;
+            })}));
     }
 
     render() {
@@ -85,7 +68,8 @@ class App extends Component {
         const addToCart = (food, restaurant) => {
             for (let i in this.state.cart) {
                 let cartItem = this.state.cart[i];
-                if (cartItem.food.foodId === food.foodId && cartItem.restaurant.restaurantId === restaurant.restaurantId) {
+                if (cartItem.food.food_id === food.food_id && cartItem.restaurant.restaurant_id === restaurant.restaurant_id) {
+                    notify.show(food.name + ' from ' + restaurant.name + ' already added to cart.');
                     return;
                 }
             }
@@ -94,7 +78,38 @@ class App extends Component {
                 cart: [...this.state.cart, {food: food, restaurant: restaurant}]
             });
 
-            notify.show('Added ' + food.name + ' from ' + restaurant.restaurantName + ' to cart.');
+            notify.show('Added ' + food.name + ' from ' + restaurant.name + ' to cart.');
+        };
+
+        const getRestaurantMenu = (id) => {
+            fetch(host + '/menu/' + id, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type' : 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(json => {
+                    if (isDifferent(json, this.state.menu, 'foodId')) {
+                        this.setState({menu: json.map(e => {
+                            e.thumbnail = host + '/images/' + e.image;
+
+                            return e;
+                        })});
+                    }
+                })
+                .catch(() => {
+                    if (this.state.menu.length !== 0) {
+                        this.setState({menu: []});
+                    }
+                });
+        };
+
+        const isDifferent = (n, base, key) => {
+            const a = n.map(e => e[key]);
+            const b = base.map(e => e[key]);
+
+            return _.difference(a, b).length;
         };
 
         return (
@@ -106,9 +121,9 @@ class App extends Component {
                  height="100%"
                  background="#EEEEEE"
             >
-                <AppContainer restaurants={restaurants} isDropdownShown={this.state.isDropdownShown}
+                <AppContainer restaurants={this.state.restaurants} isDropdownShown={this.state.isDropdownShown}
                               showDropdown={showDropdown} showChooser={showChooser} user={this.state.user}
-                              cart={this.state.cart} addToCart={addToCart}/>
+                              cart={this.state.cart} addToCart={addToCart} menu={this.state.menu} getRestaurantMenu={getRestaurantMenu} />
                 {this.state.randomize ? (<Randomizer onClose={hideChooser} />) : (<span></span>)}
                 {!this.state.isLoggedIn ? (<Login onLogin={onLogin} />) : (<span></span>)}
             </Div>

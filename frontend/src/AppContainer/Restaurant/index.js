@@ -8,6 +8,13 @@ import Menu from './Menu';
 const Restaurant = (props) => {
     const {restaurant} = props;
 
+    if (restaurant == null) {
+        return null;
+    }
+
+    console.log(restaurant);
+    props.getRestaurantMenu(restaurant.restaurant_id);
+
     return (
         <Div>
             <Link to="/"> Home </Link>
