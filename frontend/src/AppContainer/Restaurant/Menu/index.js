@@ -7,23 +7,19 @@ const Menu = (props) => {
     const {food} = props;
 
     return (
-            <Card style={{margin: 0}} onClick={() => props.addToCart(food) }>
-                <Div width="100%" height="250px" overflow="hidden" position="relative">
+        <Card style={{ margin: '0 0 5px 0'}} onClick={() => props.addToCart(food) }>
+            <Div display="flex" alignItems="center" justifyContent="space-between">
+                <Div display="flex" alignItems="center">
                     <Img
                         src={food.thumbnail}
-                        position="absolute"
-                        left="-500%"
-                        right="-1000%"
-                        top="-1000%"
-                        bottom="-1000%"
                         margin="auto"
-                        width="250px"/>
+                        height="45px"
+                        width="45px"/>
+                    <Span fontSize="18px" fontWeight="bold" marginLeft="10px">{food.name}</Span>
                 </Div>
-                <Div marginTop="10px" display="flex" justifyContent="space-between">
-                    <Span fontSize="18px" fontWeight="bold">{food.name}</Span>
-                    <Span fontSize="18px">{food.price}Php</Span>
-                </Div>
-            </Card>
+                <Span fontSize="18px">{food.price}Php</Span>
+            </Div>
+        </Card>
     );
 };
 
