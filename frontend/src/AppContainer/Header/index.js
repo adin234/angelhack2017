@@ -21,10 +21,10 @@ const Header = (props) => {
                              top="15px"
                              src={props.user.picture.data.url}/>
                     }>
-                        <NavItem><Input name='group1' type='checkbox' value='vegetarian' label='Vegetarian' /></NavItem>
-                        <NavItem><Input name='group1' type='checkbox' value='hypertensive' label='Hypertensive' /></NavItem>
-                        <NavItem><Input name='group1' type='checkbox' value='halal' label='Halal Only' /></NavItem>
-                        <NavItem><Input name='group1' type='checkbox' value='budget' label='Budget' /></NavItem>
+                        <NavItem><Input name='group1' onChange={e => props.updatePreference('vegetarian', e)} type='checkbox' value='vegetarian' label='Vegetarian' /></NavItem>
+                        <NavItem><Input name='group1' onChange={e => props.updatePreference('hypertensive', e)} type='checkbox' value='hypertensive' label='Hypertensive' /></NavItem>
+                        <NavItem><Input name='group1' onChange={e => props.updatePreference('halal', e)} type='checkbox' value='halal' label='Halal Only' /></NavItem>
+                        <NavItem><Input name='group1' onChange={e => props.updatePreference('budget', e)} type='checkbox' value='budget' label='Budget' /></NavItem>
                         <NavItem style={{
                             padding: '0',
                             lineHeight: '0',

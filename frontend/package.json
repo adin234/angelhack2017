@@ -8,6 +8,7 @@
   "dependencies": {
     "glamor": "^2.20.25",
     "glamorous": "^3.23.5",
+    "lodash": "^4.17.4",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-facebook-login": "^3.6.2",

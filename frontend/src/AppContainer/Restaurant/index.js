@@ -8,6 +8,12 @@ import Menu from './Menu';
 const Restaurant = (props) => {
     const {restaurant} = props;
 
+    if (restaurant == null) {
+        return null;
+    }
+
+    props.getRestaurantMenu(restaurant.restaurant_id);
+
     return (
         <Div>
             <Link to="/"> Home </Link>
@@ -19,7 +25,7 @@ const Restaurant = (props) => {
                      background="rgba(0,0,0,.3)" padding="5px" fontWeight="bold" width="100%" color="white"
                      fontSize="16px" justifyContent="space-between"
                 >
-                    <Span>{restaurant.restaurantName}</Span>
+                    <Span>{restaurant.name}</Span>
                     <Span>{restaurant.distance}km</Span>
                 </Div>
             </Div>
@@ -27,7 +33,7 @@ const Restaurant = (props) => {
                 padding="5px">
                 <H4 textAlign="left">Menu</H4>
                 { props.menu.length > 0
-                    ? props.menu.map((menu) => <Menu addToCart={(food) => props.addToCart(food, restaurant)} food={menu} key={menu.foodId} />)
+                    ? props.menu.map((menu) => <Menu addToCart={(food) => props.addToCart(food, restaurant)} food={menu} key={menu.food_id} />)
                     : <span>No Menu Available</span> }
 
             </Div>

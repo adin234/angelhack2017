@@ -26,3 +26,20 @@
 .dropdown-content {
   width: auto !important;
 }
+
+#notification-wrapper > div,
+#notification-wrapper > div > * {
+  width: 100%!important;
+}
+
+.toast-notification {
+  top: -108px!important;
+  position: fixed;
+}
+
+.toast-notification > * {
+  position: fixed;
+  left:0;
+  right:0;
+  top:0;
+}

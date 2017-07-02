@@ -10,75 +10,19 @@ import {Div} from 'glamorous';
 
 import 'sanitize.css/sanitize.css';
 
-const restaurants = [{
-    restaurantId: 1,
-    restaurantName: 'a',
-    thumbnail: 'https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7',
-    distance: '4.5'
-}, {
-    restaurantId: 2,
-    restaurantName: 'ba',
-    thumbnail: 'https://employmenthub.co/images/logos/Mcdonald%27s.jpg',
-    distance: '4.5'
-}, {
-    restaurantId: 3,
-    restaurantName: 'bca',
-    thumbnail: 'https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7',
-    distance: '4.5'
-}, {
-    restaurantId: 4,
-    restaurantName: 'abcd',
-    thumbnail: 'https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7',
-    distance: '4.5'
-}, {
-    restaurantId: 5,
-    restaurantName: 'abcde',
-    thumbnail: 'https://employmenthub.co/images/logos/Mcdonald%27s.jpg',
-    distance: '4.5'
-}, {
-    restaurantId: 6,
-    restaurantName: 'abcdef',
-    thumbnail: 'https://employmenthub.co/images/logos/Mcdonald%27s.jpg',
-    distance: '4.5'
-}, {
-    restaurantId: 7,
-    restaurantName: 'abcdefg',
-    thumbnail: 'https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7',
-    distance: '4.5'
-}];
+import _ from 'lodash';
 
-const menu = [
-    {
-        foodId: 1,
-        name: "Burger",
-        price: 69,
-        thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
-    },
-    {
-        foodId: 2,
-        name: "Cake",
-        price: 70,
-        thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
-    },
-    {
-        foodId: 3,
-        name: "Spaghetti",
-        price: 71,
-        thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
-    },
-    {
-        foodId: 4,
-        name: "Italian Chicken Ala King",
-        price: 72,
-        thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
-    },
-    {
-        foodId: 5,
-        name: "French Fries",
-        price: 73,
-        thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
+const host = 'http://172.16.1.67:6969';
+
+const toQueryString = (obj) => {
+    let parts = [];
+    for (let i in obj) {
+        if (obj.hasOwnProperty(i)) {
+            parts.push(encodeURIComponent(i) + "=" + encodeURIComponent(obj[i]));
+        }
     }
-];
+    return parts.join("&");
+};
 
 class App extends Component {
     constructor() {
@@ -88,9 +32,62 @@ class App extends Component {
             isLoggedIn: false,
             showRestaurants: true,
             isDropdownShown: false,
+            restaurants: [],
             user: null,
-            cart: []
+            menu: [],
+            cart: [],
+            recommendations: [],
+            preferences: {
+                halal: false,
+                vegetarian: false,
+                budget: false,
+                hypertensive: false
+            }
         };
+    }
+
+    componentWillMount() {
+        fetch(host + '/restaurants/list', {
+                method: 'GET',
+                headers: {
+                    'Content-Type' : 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(json => this.setState({restaurants: json.map(e => {
+                e.thumbnail = host + '/images/' + e.image;
+                return e;
+            })}));
+
+        this.recommendFood();
+    }
+
+    recommendFood() {
+        const params = toQueryString(this.state.preferences);
+
+        const notInCart = (e) => {
+            const ids = this.state.cart.map(e => e.food.food_id);
+            return !~ids.indexOf(e.food_id);
+        };
+
+        fetch(host + '/menu/' + 1 + '?' + params, {
+                method: 'GET',
+                headers: {
+                    'Content-Type' : 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(json => {
+                this.setState({recommendations: json.map(e => {
+                    e.thumbnail = host + '/images/' + e.image;
+                    return e;
+                }).filter(notInCart)});
+            })
+            .catch(() => {
+                if (this.state.menu.length !== 0) {
+                    this.setState({menu: []});
+                }
+            });
     }
 
     render() {
@@ -115,10 +112,17 @@ class App extends Component {
             })
         };
 
+        const onDeny = () => {
+            let oldRecommendations = this.state.recommendations;
+            oldRecommendations.shift();
+            this.setState({recommendations: oldRecommendations});
+        };
+
         const addToCart = (food, restaurant) => {
             for (let i in this.state.cart) {
                 let cartItem = this.state.cart[i];
-                if (cartItem.food.foodId === food.foodId && cartItem.restaurant.restaurantId === restaurant.restaurantId) {
+                if (cartItem.food.food_id === food.food_id && cartItem.restaurant.restaurant_id === restaurant.restaurant_id) {
+                    notify.show(food.name + ' from ' + restaurant.name + ' already added to cart.', 'warning', 1000, '#000000');
                     return;
                 }
             }
@@ -127,7 +131,63 @@ class App extends Component {
                 cart: [...this.state.cart, {food: food, restaurant: restaurant}]
             });
 
-            notify.show('Added ' + food.name + ' from ' + restaurant.restaurantName + ' to cart.');
+            hideChooser();
+            onDeny();
+
+            notify.show('Added ' + food.name + ' from ' + restaurant.name + ' to cart.', 'success', 1000, '#000000');
+        };
+
+        const getRestaurantMenu = (id) => {
+            fetch(host + '/menu/' + id, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type' : 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(json => {
+                    if (isDifferent(json, this.state.menu, 'food_id')) {
+                        this.setState({menu: json.map(e => {
+                            e.thumbnail = host + '/images/' + e.image;
+
+                            return e;
+                        })});
+                    }
+                })
+                .catch(() => {
+                    if (this.state.menu.length !== 0) {
+                        this.setState({menu: []});
+                    }
+                });
+        };
+
+        const isDifferent = (n, base, key) => {
+            const a = n.map(e => e[key]);
+            const b = base.map(e => e[key]);
+
+            return _.difference(a, b).length;
+        };
+
+        const getRestaurant = (id) => {
+            for (let i in this.state.restaurants) {
+                if (+this.state.restaurants[i].restaurant_id === +id) {
+                    getRestaurantMenu(id);
+                    return this.state.restaurants[i];
+                }
+            }
+            return this.state.restaurants[0];
+        };
+
+        const updatePreference = (type, input) => {
+            const toUpdate = this.state.preferences;
+            toUpdate[type] = !toUpdate[type];
+            this.setState({preferences: toUpdate});
+            this.recommendFood();
+        };
+
+        const onOrder = () => {
+            notify.show('Successfully ordered ' + this.state.cart.length + ' items', 'success', 1000, '#000000');
+            this.setState({cart: []});
         };
 
         return (
@@ -137,12 +197,14 @@ class App extends Component {
                  flexDirection="column"
                  position="relative"
                  height="100%"
-                 background="#EEEEEE"
-            >
-                <AppContainer restaurants={restaurants} menu={menu} isDropdownShown={this.state.isDropdownShown}
-                              showDropdown={showDropdown} showChooser={showChooser} user={this.state.user}
-                              cart={this.state.cart} addToCart={addToCart}/>
-                {this.state.randomize ? (<Randomizer onClose={hideChooser} />) : (<span></span>)}
+                 background="#EEEEEE">
+                <AppContainer restaurants={this.state.restaurants} isDropdownShown={this.state.isDropdownShown} updatePreference={updatePreference}
+                              showDropdown={showDropdown} showChooser={showChooser} user={this.state.user} getRestaurant={getRestaurant}
+                              cart={this.state.cart} addToCart={addToCart} menu={this.state.menu} getRestaurantMenu={getRestaurantMenu}
+                              onOrder={onOrder} />
+                {this.state.randomize ? (<Randomizer onClose={hideChooser}
+                                                     onDeny={onDeny} onAdd={addToCart}
+                                                     getRestaurant={getRestaurant} recommendations={this.state.recommendations}/>) : (<span></span>)}
                 {!this.state.isLoggedIn ? (<Login onLogin={onLogin} />) : (<span></span>)}
             </Div>
         );
