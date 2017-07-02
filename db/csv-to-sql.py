@@ -76,15 +76,15 @@ def resto_csv_to_obj():
     return restos
 
 def resto_obj_to_sql(restos):
-    RESTO_INSERT = "INSERT INTO restaurant VALUES ({id}, {name}, {distance}, {path})"
+    RESTO_INSERT = 'INSERT INTO restaurant VALUES ({id}, "{name}", {distance});'
     for resto in restos:
-        print(RESTO_INSERT.format(id = resto["id"],name = resto["resto"],distance = resto["distance"],path = resto["image"]))
+        print(RESTO_INSERT.format(id = resto["id"],name = resto["resto"],distance = resto["distance"]))
 
 def food_obj_to_sql(foods):
-    FOOD_TEMPLATE = "INSERT INTO food VALUES({id}, {name}, {resto_id}, {price}, {path})"
-    FOOD_TAG_TEMPLATE = "INSERT INTO food_tag VALUES ({food_id}, {tag})"
+    FOOD_TEMPLATE = 'INSERT INTO food VALUES({id}, "{name}", {resto_id}, "{price}", "{path}");'
+    FOOD_TAG_TEMPLATE = 'INSERT INTO food_tag VALUES ({food_id}, "{tag}");'
     for food in foods:
-        print(FOOD_TEMPLATE.format(id = food["id"], name = food["food"], resto_id = resto_to_id[food["resto"]], price = food["price"], path = food["image"]))
+        print(FOOD_TEMPLATE.format(id = food["id"], name = food["food"], resto_id = resto_to_id[food["resto"]], price = food["price"], path = food["food"] + ".jpg"))
         for tag in food["tags"]:
             print(FOOD_TAG_TEMPLATE.format(food_id = food["id"], tag = tag))
         
@@ -100,36 +100,38 @@ import shutil
 import base64
 from mimetypes import guess_extension, guess_type
 def save_images():
-    driver = webdriver.Firefox()
-    urls = []
+   # driver = webdriver.Firefox()
+    #urls = []
     foods = food_csv_to_obj()
-    for i in range(len(foods)):
-        url = 'https://images.google.com/'
-        linkList = []
-        driver.get(url)
-        string = foods[i]["food"] 
-        text = driver.find_element_by_xpath('//*[@id="lst-ib"]')
-        text.send_keys(string)
-        text.send_keys(Keys.RETURN)
-        time.sleep(4)
-        links = driver.find_element_by_css_selector('div.rg_di.rg_bx.rg_el.ivg-i>a.rg_l')
-        links.click()
-        time.sleep(6)
-        t = driver.find_elements_by_css_selector('div.irc_mutc>a.irc_mutl>img.irc_mut')
-        for tt in t:
-            if tt.get_attribute('src') != None:
-                while tt.get_attribute('src') == "": continue
-                src = tt.get_attribute('src')
-                j = src.find(',')
-                ext = guess_extension(guess_type(src)[0])
-                if ext=="jpe" or ext=="jpeg": ext = "jpg"
-                out = "images/" + foods[i]["food"] + ext
-                src = src[j+1:]
-                print(out)
-                with open(out, 'wb') as f:
-                    f.write(base64.b64decode(src))
-                foods[i]["image"] = out
-                break
+    # for i in range(len(foods)):
+    #     url = 'https://images.google.com/'
+    #     linkList = []
+    #     driver.get(url)
+    #     string = foods[i]["food"] 
+    #     text = driver.find_element_by_xpath('//*[@id="lst-ib"]')
+    #     text.send_keys(string)
+    #     text.send_keys(Keys.RETURN)
+    #     time.sleep(4)
+    #     links = driver.find_element_by_css_selector('div.rg_di.rg_bx.rg_el.ivg-i>a.rg_l')
+    #     links.click()
+    #     time.sleep(6)
+    #     t = driver.find_elements_by_css_selector('div.irc_mutc>a.irc_mutl>img.irc_mut')
+    #     for tt in t:
+    #         if tt.get_attribute('src') != None:
+    #             while tt.get_attribute('src') == "": continue
+    #             src = tt.get_attribute('src')
+    #             j = src.find(',')
+    #             ext = guess_extension(guess_type(src)[0])
+    #             if ext=="jpe" or ext == "jpeg":
+    #                 ext = "jpg"
+    #             out = "images/" + foods[i]["food"] + ext
+    #             src = src[j+1:]
+    #             print(out)
+    #             with open(out, 'wb') as f:
+    #                 f.write(base64.b64decode(src))
+    #             foods[i]["image"] = out
+    #             break
     return foods
-        
+
+resto_obj_to_sql(resto_csv_to_obj())
 food_obj_to_sql(save_images())
