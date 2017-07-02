@@ -1,11 +1,11 @@
-var express        = require('express');
-var app            = express();
-var bodyParser     = require('body-parser');
-var methodOverride = require('method-override');
-var mysql = require('mysql');
-var cors		   = require('cors');
-var exec = require('child_process').exec;
-app.use(cors());
+const express        = require('express');
+const bodyParser     = require('body-parser');
+const methodOverride = require('method-override');
+const mysql 		 = require('mysql');
+const cors		   	 = require('cors');
+const exec 		   	 = require('child_process').exec;
+
+const app            = express();
 
 const connection = mysql.createConnection({
   host : 'localhost',
@@ -24,87 +24,88 @@ connection.connect((err) => {
     }
 });
 
-var port = process.env.PORT || 6969; 
+const port = process.env.PORT || 6969;
+
 app.use(bodyParser.json()); 
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); 
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(methodOverride('X-HTTP-Method-Override')); 
-app.use('/images', express.static(__dirname + '/images')); 
-app.listen(port);                             
+app.use('/images', express.static(__dirname + '/images'));
+app.use(cors());
+
+app.listen(port);
+
 console.log('Magic happens on port ' + port);
 
 app.get('/', function (req, res) {
   res.send('Hello World!')
 });
-/*
-get tagged foods based on query
-run ml
-ml returns food ids
-remove intersecting foodid*/
-app.get('/restaurants/list',function(req,res){
-	var payload = [];
-	var query = "SELECT * FROM restaurant"
+
+app.get('/restaurants/list', (req, res) => {
+	const payload = [];
+	const query = "SELECT * FROM restaurant";
+
 	connection.query(
 		query,
 		payload,
-		function (error, results, fields) {
-			console.log(results);
+		(error, results) => {
 			res.send(results);
 		}
 	);
 });
 
-app.get('/menu/:restaurantId',function(req,res){
-	var payload = [req.params.restaurantId];
-	var query = "SELECT * FROM food where restaurant_id = ?"
+app.get('/menu/:restaurantId', (req, res) => {
+	const payload = [req.params.restaurantId];
+	const query = "SELECT * FROM food where restaurant_id = ?";
+
 	connection.query(
 		query,
 		payload,
-		function (error, results, fields) {
+		(error, results) => {
 			res.send(results);
 		}
 	);
 });
 
-app.get('/recommend/:id', function(req, res) {
-	var payload = [req.params.user_id];
-	var cmd = "python3 " + __dirname + "/../ml/fallback.py 1";
+app.get('/recommend/:id', (req, res) => {
+	const cmd = "python3 " + __dirname + "/../ml/fallback.py 1";
+
 	exec(
 		cmd,
-		function (error, stdout, stderr) {
-			var bawal = [];
+		function (error, stdout) {
+			let bawal = [];
+
 			if (req.query.vegetarian) bawal = bawal.concat(Object.keys(meat));
 			if (req.query.halal) bawal = bawal.concat(Object.keys(halal));
 			if (req.query.hypertensive) bawal = bawal.concat(Object.keys(hypertensive));
 			
-			console.log(bawal);
-			let recs = JSON.parse(stdout);
-			let filtered_recs = []
+			const recs = JSON.parse(stdout);
+			const filtered_recs = [];
+
 			for (let i = 0; i < recs.length; ++i) {
 				let removed = false;
 				for (let b of bawal) {
-					console.log(typeof recs[i])
 					if (~recs[i].tags.indexOf(b)) {
 						removed = true;
 						break
 					}
 				}
+
 				if (!removed) filtered_recs.push(recs[i]);
 			}
-			res.send(filtered_recs.filter((e)=> (req.query.budget ? e.price <= 100 : 
-				true) && (e["name"].split(' ').some((e) => ~bawal.indexOf(e.toLowerCase())) ? false : true)));
+
+			res.send(filtered_recs.filter((e)=> (req.query.budget
+				? e.price <= 100
+				: true) && !e["name"].split(' ').some((e) => ~bawal.indexOf(e.toLowerCase()))));
 		}
 	);
 });
 
-app.post('order',function(req,res){
-	var user_id = req.body.userId;
-    var token = req.body.token;
-    var name = req.body.orders;
+app.post('order', (req, res) => {
     res.send(true);
 });
 
-var meat = {
+const meat = {
 	"longganisa":true,
 	"meat":true,
 	"bacon":true,
@@ -124,7 +125,7 @@ var meat = {
 	"turkey":true
 };
 
-var hypertensive = {
+const hypertensive = {
 	"shrimp":true,
 	"crabs":true,
 	"crispy pata":true,
@@ -133,7 +134,7 @@ var hypertensive = {
 	"lamb":true
 };
 
-var halal = {
+const halal = {
 	"pork": true
 };
 
