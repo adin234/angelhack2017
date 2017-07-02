@@ -149,13 +149,20 @@ def recommend(db, nn):
         foods = cursor.fetchall()
 
         for f in foods:
-            recommendations.append({
+            food = {
                 'food_id': f[0],
                 'name': f[1],
                 'price': f[2],
                 'restaurant_id': f[3],
                 'image': f[4]
-            })
+            }
+
+            cursor = db.cursor()
+            cursor.execute('SELECT tag FROM food_tag WHERE food_id = %s', (int(f[0]),))
+            tags = cursor.fetchall()
+            food['tags'] = [i[0] for i in tags]
+            recommendations.append(food)
+
 
     return json.dumps(recommendations)
 
