@@ -6,6 +6,7 @@ CREATE TABLE restaurant (
     restaurant_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
     distance float not null,
+    image VARCHAR(255) NOT NULL,
     PRIMARY KEY (restaurant_id)
 );
 
