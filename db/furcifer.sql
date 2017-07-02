@@ -30,6 +30,10 @@ CREATE TABLE user (
     user_id INT NOT NULL AUTO_INCREMENT,
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    vegetarian_only TINYINT DEFAULT 0,
+    halal_only TINYINT DEFAULT 0,
+    hypertensive TINYINT DEFAULT 0,
+    budget_only TINYINT DEFAULT 0,
     PRIMARY KEY (user_id)
 );
 

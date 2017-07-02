@@ -12,12 +12,12 @@ const Menu = (props) => {
                     <Img
                         src={food.thumbnail}
                         position="absolute"
-                        left="-1000%"
+                        left="-500%"
                         right="-1000%"
                         top="-1000%"
                         bottom="-1000%"
                         margin="auto"
-                        width="100%"/>
+                        width="250px"/>
                 </Div>
                 <Div marginTop="10px" display="flex" justifyContent="space-between">
                     <Span fontSize="18px" fontWeight="bold">{food.name}</Span>
