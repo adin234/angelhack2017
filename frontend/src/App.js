@@ -47,6 +47,39 @@ const restaurants = [{
     distance: '4.5'
 }];
 
+const menu = [
+    {
+        foodId: 1,
+        name: "Burger",
+        price: 69,
+        thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
+    },
+    {
+        foodId: 2,
+        name: "Cake",
+        price: 70,
+        thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
+    },
+    {
+        foodId: 3,
+        name: "Spaghetti",
+        price: 71,
+        thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
+    },
+    {
+        foodId: 4,
+        name: "Italian Chicken Ala King",
+        price: 72,
+        thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
+    },
+    {
+        foodId: 5,
+        name: "French Fries",
+        price: 73,
+        thumbnail: "https://d34nj53l8zkyd3.cloudfront.net/ph/view/2ce8e502a7"
+    }
+];
+
 class App extends Component {
     constructor() {
         super();
@@ -106,7 +139,7 @@ class App extends Component {
                  height="100%"
                  background="#EEEEEE"
             >
-                <AppContainer restaurants={restaurants} isDropdownShown={this.state.isDropdownShown}
+                <AppContainer restaurants={restaurants} menu={menu} isDropdownShown={this.state.isDropdownShown}
                               showDropdown={showDropdown} showChooser={showChooser} user={this.state.user}
                               cart={this.state.cart} addToCart={addToCart}/>
                 {this.state.randomize ? (<Randomizer onClose={hideChooser} />) : (<span></span>)}

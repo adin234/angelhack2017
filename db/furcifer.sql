@@ -3,17 +3,18 @@ CREATE DATABASE IF NOT EXISTS furcifer;
 USE furcifer;
 
 CREATE TABLE restaurant (
-    restaurant_id INT NOT NULL AUTO_INCREMENT,
+    restaurant_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
-    address TEXT DEFAULT NULL,
+    distance float not null,
     PRIMARY KEY (restaurant_id)
 );
 
 CREATE TABLE food (
-    food_id INT NOT NULL AUTO_INCREMENT,
+    food_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
-    price FLOAT NOT NULL,
-    restaurant_id INT NOT NULL, 
+    restaurant_id INT NOT NULL,
+    price FLOAT NOT NULL, 
+    image varchar(255) NOT NULL,
     PRIMARY KEY (food_id),
     FOREIGN KEY (restaurant_id) REFERENCES restaurant(restaurant_id)
 );
