@@ -17,29 +17,19 @@ const AppContainer = (props) => {
         props.showChooser();
     };
 
-    const getRestaurant = (mProps) => {
-        for (let i in props.restaurants) {
-            if (+props.restaurants[i].restaurant_id === +mProps.match.params.id) {
-                props.getRestaurantMenu(mProps.match.params.id);
-                return props.restaurants[i];
-            }
-        }
-        return props.restaurants[0];
-    };
-
     return (
         <Div
             display="flex"
             flex="1"
             flexDirection="column"
             height="100%">
-            <Header user={props.user} showDropdown={props.showDropdown} isDropdownShown={props.isDropdownShown} />
+            <Header user={props.user} updatePreference={props.updatePreference} showDropdown={props.showDropdown} isDropdownShown={props.isDropdownShown} />
             <Notifications />
             <Switch>
                 <Route exact path="/" component={(mProps) => <RestaurantList {...mProps} restaurants={props.restaurants} onShowChooser={onShowChooser} /> } />
-                <Route path="/cart" component={(mProps) => <Cart {...mProps} items={props.cart}/> } />
+                <Route path="/cart" component={(mProps) => <Cart {...mProps} items={props.cart} onOrder={props.onOrder} /> } />
                 <Route path="/restaurant/:id" component={(mProps) =>
-                    <Restaurant {...mProps} addToCart={props.addToCart} restaurant={getRestaurant(mProps)}
+                    <Restaurant {...mProps} addToCart={props.addToCart} restaurant={props.getRestaurant(mProps.match.params.id)}
                                 menu={props.menu} getRestaurantMenu={props.getRestaurantMenu} />
                 } />
             </Switch>
