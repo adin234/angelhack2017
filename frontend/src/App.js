@@ -70,7 +70,7 @@ class App extends Component {
             return !~ids.indexOf(e.food_id);
         };
 
-        fetch(host + '/menu/' + 1 + '?' + params, {
+        fetch(host + '/recommend/' + 1 + '?' + params, {
                 method: 'GET',
                 headers: {
                     'Content-Type' : 'application/json',
