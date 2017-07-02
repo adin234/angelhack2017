@@ -77,20 +77,22 @@ app.get('/recommend/:id', function(req, res) {
 			if (req.query.halal) bawal = bawal.concat(Object.keys(halal));
 			if (req.query.hypertensive) bawal = bawal.concat(Object.keys(hypertensive));
 			
-			console.log(error)
+			console.log(bawal);
 			let recs = JSON.parse(stdout);
 			let filtered_recs = []
 			for (let i = 0; i < recs.length; ++i) {
 				let removed = false;
 				for (let b of bawal) {
-					if (recs[i].includes(b)) {
+					console.log(typeof recs[i])
+					if (~recs[i].tags.indexOf(b)) {
 						removed = true;
 						break
 					}
 				}
 				if (!removed) filtered_recs.push(recs[i]);
 			}
-			res.send(filtered_recs);
+			res.send(filtered_recs.filter((e)=> (req.query.budget ? e.price <= 100 : 
+				true) && (e["name"].split(' ').some((e) => ~bawal.indexOf(e.toLowerCase())) ? false : true)));
 		}
 	);
 });
@@ -103,10 +105,13 @@ app.post('order',function(req,res){
 });
 
 var meat = {
+	"longganisa":true,
 	"meat":true,
 	"bacon":true,
 	"beef":true,
 	"chicken":true,
+	"cheeseburger":true,
+	"burger":true,
 	"breast":true,
 	"ham":true,
 	"hamburger":true,
