@@ -4,7 +4,8 @@ var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
 var mysql = require('mysql');
 var cors		   = require('cors');
-var async 		   = require('async')
+var async 		   = require('async');
+var exec = require('child_process').exec;
 app.use(cors());
 
 const connection = mysql.createConnection({
@@ -15,7 +16,6 @@ const connection = mysql.createConnection({
 });
 
 connection.connect((err) => {
-
     if (!err) {
         connection.query('USE furcifer;');
         console.log("Database connected!");
@@ -37,7 +37,11 @@ console.log('Magic happens on port ' + port);
 app.get('/', function (req, res) {
   res.send('Hello World!')
 });
-
+/*
+get tagged foods based on query
+run ml
+ml returns food ids
+remove intersecting foodid*/
 app.get('/restaurants/list',function(req,res){
 	var payload = [];
 	var query = "SELECT * FROM restaurant"
@@ -65,12 +69,29 @@ app.get('/menu/:restaurantId',function(req,res){
 
 app.get('/recommend/:id', function(req, res) {
 	var payload = [req.params.user_id];
-	var query = "SELECT * FROM food"
-	connection.query(
-		query,
-		payload,
-		function (error, results, fields) {
-			res.send(results);
+	var cmd = "python3 " + __dirname + "/../ml/fallback.py 1";
+	exec(
+		cmd,
+		function (error, stdout, stderr) {
+			var bawal = [];
+			if (req.query.vegetarian) bawal = bawal.concat(Object.keys(meat));
+			if (req.query.halal) bawal = bawal.concat(Object.keys(halal));
+			if (req.query.hypertensive) bawal = bawal.concat(Object.keys(hypertensive));
+			
+			console.log(error)
+			let recs = JSON.parse(stdout);
+			let filtered_recs = []
+			for (let i = 0; i < recs.length; ++i) {
+				let removed = false;
+				for (let b of bawal) {
+					if (recs[i].includes(b)) {
+						removed = true;
+						break
+					}
+				}
+				if (!removed) filtered_recs.push(recs[i]);
+			}
+			res.send(filtered_recs);
 		}
 	);
 });
@@ -115,92 +136,6 @@ var hypertensive = {
 var halal = {
 	"pork": true
 };
-
-function classifier_vegetarian(row, vegetarian) {
-	if (!vegetarian) return true;
-	var payload = [row["food_id"]];
-	var query = "SELECT tag FROM food_tag where food_id = ?"
-
-	return new Promise((resolve, reject) => {
-		connection.query(
-			query,
-			payload,
-			function (error, results, fields) {
-				var tags = results;
-				for (var tag of tags) {
-					if (tag in meat) {
-						resolve(false);
-					}
-				}
-				for (var token of row["name"].split(' ').map((x)=>{return x.toLowerCase();})) {
-					if (token in meat) {
-						resolve(false);
-					}
-				}
-				resolve(false);
-			}
-		);
-	});
-};
-
-function classifier_budget(row, budget) {
-	if (!budget) return true;
-	return row["price"] <= 100;
-}
-
-function classifier_halal(row, halal) {
-	if (!halal) return true;
-	var payload = [row["food_id"]];
-	var query = "SELECT tag FROM food_tag where food_id = ?"
-
-	return new Promise((resolve, reject) => {
-		connection.query(
-			query,
-			payload,
-			function (error, results, fields) {
-				var tags = results;
-				for (var tag of tags) {
-					if (tag in halal) {
-						resolve(false);
-					}
-				}
-				for (var token of row["name"].split(' ').map((x)=>{return x.toLowerCase();})) {
-					if (token in halal) {
-						resolve(false);
-					}
-				}
-				resolve(true);
-			}
-		);
-	});
-}
-
-function classifier_hypertensive(row, hypertensive) {
-	if (!hypertensive) return true;
-	var payload = [row["food_id"]];
-	var query = "SELECT tag FROM food_tag where food_id = ?"
-
-	return new Promise((resolve, reject) => {
-		connection.query(
-			query,
-			payload,
-			function (error, results, fields) {
-				var tags = results;
-				for (var tag of tags) {
-					if (tag in hypertensive) {
-						resolve(false);
-					}
-				}
-				for (var token of row["name"].split(' ').map((x)=>{return x.toLowerCase();})) {
-					if (token in hypertensive) {
-						resolve(false);
-					}
-				}
-				resolve(true);
-			}
-		);
-	});
-}
 
 // expose app           
 module.exports = app;                         
